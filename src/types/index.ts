@@ -62,6 +62,12 @@ export interface User {
   email: string;
   name?: string;
   avatarUrl?: string;
+  username?: string;
+  bio?: string;
+  role?: string;
+  location?: string;
+  timezone?: string;
+  language?: string;
 }
 
 export interface Comment {
