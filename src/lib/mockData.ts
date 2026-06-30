@@ -7,18 +7,18 @@ export const mockUser: User = {
 };
 
 export const mockTags: Tag[] = [
-  { id: 't1', name: 'lyrics', color: '#8B7355' },
-  { id: 't2', name: 'demo', color: '#D97757' },
-  { id: 't3', name: 'inspiration', color: '#5B8C5A' },
-  { id: 't4', name: 'reference', color: '#5B7DB1' },
-  { id: 't5', name: 'final', color: '#A85751' },
-  { id: 't6', name: 'wip', color: '#C7A04F' },
-  { id: 't7', name: 'mix', color: '#6B5B95' },
-  { id: 't8', name: 'master', color: '#2E3A59' },
-  { id: 't9', name: 'idea', color: '#E8A87C' },
-  { id: 't10', name: 'voice-memo', color: '#C38D9E' },
-  { id: 't11', name: 'chord-chart', color: '#41B3A3' },
-  { id: 't12', name: 'archive', color: '#85929E' },
+  { id: 't1', name: 'lyrics', color: '#808080' },
+  { id: 't2', name: 'demo', color: '#808080' },
+  { id: 't3', name: 'inspiration', color: '#808080' },
+  { id: 't4', name: 'reference', color: '#808080' },
+  { id: 't5', name: 'final', color: '#808080' },
+  { id: 't6', name: 'wip', color: '#808080' },
+  { id: 't7', name: 'mix', color: '#808080' },
+  { id: 't8', name: 'master', color: '#808080' },
+  { id: 't9', name: 'idea', color: '#808080' },
+  { id: 't10', name: 'voice-memo', color: '#808080' },
+  { id: 't11', name: 'chord-chart', color: '#808080' },
+  { id: 't12', name: 'archive', color: '#808080' },
 ];
 
 export const mockProjects: Project[] = [
@@ -183,7 +183,7 @@ export const mockComments: Comment[] = [
     cardId: mockCards[0]?.id ?? '',
     userId: 'user-2',
     userName: 'Sarah Chen',
-    content: 'Love the mood here — feels very late-night.',
+    content: 'Love the mood here. Feels very late-night.',
     createdAt: new Date(Date.now() - 3600000),
   },
   {

@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Music, FolderOpen, LayoutGrid, Plus, ChevronDown, Headphones, Mic, Lightbulb, PenTool, MoreHorizontal, Trash2, Settings, ChevronsDownUp, ChevronsUpDown } from 'lucide-react';
+import { Music, Plus, ChevronDown, MoreHorizontal, Trash2, Settings, ChevronsDownUp, ChevronsUpDown } from 'lucide-react';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -28,16 +28,6 @@ import { CreateProjectModal } from '@/components/modals/CreateProjectModal';
 import { CreateBoardModal } from '@/components/modals/CreateBoardModal';
 import { SettingsModal } from '@/components/modals/SettingsModal';
 
-const iconMap: Record<string, React.ComponentType<{ className?: string }>> = {
-  music: Music,
-  pen: PenTool,
-  headphones: Headphones,
-  mic: Mic,
-  lightbulb: Lightbulb,
-  folder: FolderOpen,
-  grid: LayoutGrid,
-};
-
 export function AppSidebar() {
   const { state } = useSidebar();
   const collapsed = state === 'collapsed';
@@ -56,8 +46,6 @@ export function AppSidebar() {
     selectProject,
     selectBoard,
   } = useAppStore();
-
-  const getIcon = (iconName: string) => iconMap[iconName] || FolderOpen;
 
   const toggleProject = (projectId: string) => {
     setExpandedProjects((prev) => ({ ...prev, [projectId]: !(prev[projectId] ?? true) }));
@@ -94,7 +82,7 @@ export function AppSidebar() {
             <SidebarGroup>
               <CollapsibleTrigger asChild>
                 <SidebarGroupLabel className="flex items-center justify-between cursor-pointer hover:bg-accent rounded-md px-2 py-1.5">
-                  <span className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
+                  <span className="text-xs font-medium text-muted-foreground">
                     Projects
                   </span>
                   <div className="flex items-center gap-1">
@@ -132,7 +120,6 @@ export function AppSidebar() {
                 <SidebarGroupContent>
                   <SidebarMenu>
                     {projects.map((project) => {
-                      const Icon = getIcon(project.icon);
                       const isActive = selectedProjectId === project.id;
                       const projectBoards = boards.filter((b) => b.projectId === project.id);
                       const expanded = isProjectExpanded(project.id);
@@ -154,7 +141,6 @@ export function AppSidebar() {
                                   expanded ? '' : '-rotate-90'
                                 )}
                               />
-                              <Icon className="h-4 w-4" />
                               {!collapsed && <span className="flex-1 truncate">{project.name}</span>}
                               {!collapsed && (
                                 <DropdownMenu>
@@ -241,7 +227,6 @@ export function AppSidebar() {
                                 </button>
                               ) : (
                                 projectBoards.map((board) => {
-                                  const BIcon = getIcon(board.icon);
                                   const isBoardActive = selectedBoardId === board.id;
                                   return (
                                     <SidebarMenuItem key={board.id}>
@@ -255,7 +240,6 @@ export function AppSidebar() {
                                           isBoardActive && 'bg-accent text-accent-foreground'
                                         )}
                                       >
-                                        <BIcon className="h-3.5 w-3.5" />
                                         <span className="truncate">{board.name}</span>
                                       </SidebarMenuButton>
                                     </SidebarMenuItem>

@@ -236,7 +236,7 @@ export function CardDetailsModal({ open, onOpenChange, card, isNew = false }: Ca
                 value={content}
                 onChange={(e) => setContent(e.target.value)}
                 placeholder="Write your notes in Markdown..."
-                className="min-h-[200px] font-mono text-sm"
+                className="min-h-[200px] text-sm"
               />
             </div>
           )}

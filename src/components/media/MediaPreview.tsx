@@ -43,25 +43,25 @@ export function MediaPreview({
       {/* Media Content */}
       <div className="relative">
         {type === 'image' && (
-          <img
-            src={url}
-            alt="Uploaded media"
+          <div
             className={cn(
-              'w-full object-cover',
-              compact ? 'max-h-32' : 'max-h-64'
+              'w-full bg-muted flex items-center justify-center',
+              compact ? 'h-32' : 'h-64'
             )}
-          />
+          >
+            <span className="text-xs text-muted-foreground">Image</span>
+          </div>
         )}
 
         {type === 'video' && (
-          <video
-            src={url}
-            controls
+          <div
             className={cn(
-              'w-full',
-              compact ? 'max-h-32' : 'max-h-64'
+              'w-full bg-muted flex items-center justify-center',
+              compact ? 'h-32' : 'h-64'
             )}
-          />
+          >
+            <span className="text-xs text-muted-foreground">Video</span>
+          </div>
         )}
 
         {type === 'audio' && (

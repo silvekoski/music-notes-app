@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Card } from '@/types';
-import { Pencil, MoreHorizontal, GripVertical, Music, Image, Video, Trash2, Play, Check, Maximize2 } from 'lucide-react';
+import { Pencil, MoreHorizontal, GripVertical, Music, Image, Video, Trash2, Check } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
@@ -69,8 +69,8 @@ export function BoardCard({ card, onEdit, isDragging, isSelected, onSelect, sele
         className={cn(
           'group relative bg-card border transition-all duration-200 overflow-hidden',
           aspectRatioClass,
-          boardSettings.removeCornerRadius ? 'rounded-none' : 'rounded-lg',
-          isDragging ? 'opacity-70 scale-105 shadow-xl ring-2 ring-primary' : 'hover:border-ring hover:shadow-md',
+          boardSettings.removeCornerRadius ? 'rounded-none' : 'rounded',
+          isDragging ? 'opacity-70 ring-2 ring-primary' : 'hover:border-ring',
           isSelected ? 'border-primary ring-2 ring-primary/50' : 'border-border',
           'cursor-grab active:cursor-grabbing'
         )}
@@ -78,19 +78,17 @@ export function BoardCard({ card, onEdit, isDragging, isSelected, onSelect, sele
         {/* Media Background - Image */}
         {hasMediaPreview && isImage && (
           <div className="absolute inset-0 w-full h-full">
-            <img
-              src={card.attachmentUrl}
-              alt={card.title}
-              className="w-full h-full object-cover"
-            />
+            <div className="w-full h-full bg-muted flex items-center justify-center">
+              <span className="text-xs text-muted-foreground">Image</span>
+            </div>
             {/* Fullscreen button */}
             <Button
               variant="ghost"
               size="icon"
-              className="absolute right-2 bottom-2 h-8 w-8 bg-background/80 backdrop-blur-sm hover:bg-background opacity-0 group-hover:opacity-100 transition-opacity z-10"
+              className="absolute right-2 bottom-2 h-8 w-8 bg-background hover:bg-background opacity-0 group-hover:opacity-100 transition-opacity z-10"
               onClick={handleMediaClick}
             >
-              <Maximize2 className="h-4 w-4" />
+              Open
             </Button>
           </div>
         )}
@@ -98,26 +96,19 @@ export function BoardCard({ card, onEdit, isDragging, isSelected, onSelect, sele
         {/* Media Background - Video */}
         {hasMediaPreview && isVideo && (
           <div className="absolute inset-0 w-full h-full">
-            <video
-              src={card.attachmentUrl}
-              className="w-full h-full object-cover"
-              muted
-            />
+            <div className="w-full h-full bg-muted flex items-center justify-center">
+              <span className="text-xs text-muted-foreground">Video</span>
+            </div>
             {/* Play overlay */}
             <div 
-              className="absolute inset-0 flex items-center justify-center bg-background/20 cursor-pointer"
+              className="absolute inset-0 flex items-center justify-center cursor-pointer"
               onClick={handleMediaClick}
             >
-              <div className="p-3 rounded-full bg-background/80 backdrop-blur-sm hover:bg-background transition-colors">
-                <Play className="h-6 w-6 text-foreground" />
+              <div className="px-3 py-1 rounded bg-background hover:bg-background transition-colors text-xs text-foreground">
+                Play
               </div>
             </div>
           </div>
-        )}
-
-        {/* Overlay for media cards */}
-        {hasMediaPreview && (isImage || isVideo) && !boardSettings.hideCardTitles && (
-          <div className="absolute inset-0 bg-gradient-to-t from-background/90 via-background/20 to-transparent pointer-events-none" />
         )}
 
         {/* Selection Indicator */}
@@ -150,7 +141,7 @@ export function BoardCard({ card, onEdit, isDragging, isSelected, onSelect, sele
           <Button
             variant="ghost"
             size="icon"
-            className="h-7 w-7 bg-background/80 backdrop-blur-sm hover:bg-background"
+            className="h-7 w-7 bg-background hover:bg-background"
             onClick={(e) => {
               e.stopPropagation();
               onEdit();
@@ -163,7 +154,7 @@ export function BoardCard({ card, onEdit, isDragging, isSelected, onSelect, sele
               <Button
                 variant="ghost"
                 size="icon"
-                className="h-7 w-7 bg-background/80 backdrop-blur-sm hover:bg-background"
+                className="h-7 w-7 bg-background hover:bg-background"
                 onClick={(e) => e.stopPropagation()}
               >
                 <MoreHorizontal className="h-3.5 w-3.5" />
@@ -218,7 +209,7 @@ export function BoardCard({ card, onEdit, isDragging, isSelected, onSelect, sele
           {!boardSettings.hideCardTitles && (
             <h3 className={cn(
               'font-medium text-card-foreground mb-1 line-clamp-2',
-              hasMediaPreview && (isImage || isVideo) && 'text-foreground drop-shadow-sm'
+              hasMediaPreview && (isImage || isVideo) && 'text-foreground'
             )}>
               {card.title}
             </h3>

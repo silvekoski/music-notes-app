@@ -67,12 +67,12 @@ export function MediaLightbox({ open, onOpenChange, type, url, title }: MediaLig
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-[95vw] max-h-[95vh] p-0 bg-background/95 backdrop-blur-sm border-none">
+      <DialogContent className="max-w-[95vw] max-h-[95vh] p-0 bg-background border border-border">
         {/* Close button */}
         <Button
           variant="ghost"
           size="icon"
-          className="absolute right-2 top-2 z-50 bg-background/80 hover:bg-background"
+          className="absolute right-2 top-2 z-50 bg-background hover:bg-background"
           onClick={() => onOpenChange(false)}
         >
           <X className="h-4 w-4" />
@@ -85,7 +85,7 @@ export function MediaLightbox({ open, onOpenChange, type, url, title }: MediaLig
               <Button
                 variant="ghost"
                 size="icon"
-                className="bg-background/80 hover:bg-background"
+                className="bg-background hover:bg-background"
                 onClick={() => setZoom(z => Math.max(0.5, z - 0.25))}
               >
                 <ZoomOut className="h-4 w-4" />
@@ -93,19 +93,19 @@ export function MediaLightbox({ open, onOpenChange, type, url, title }: MediaLig
               <Button
                 variant="ghost"
                 size="icon"
-                className="bg-background/80 hover:bg-background"
+                className="bg-background hover:bg-background"
                 onClick={() => setZoom(z => Math.min(3, z + 0.25))}
               >
                 <ZoomIn className="h-4 w-4" />
               </Button>
             </div>
 
-            <img
-              src={url}
-              alt={title || 'Image'}
-              className="max-w-full max-h-[85vh] object-contain transition-transform duration-200"
+            <div
+              className="bg-muted flex items-center justify-center max-w-full w-[60vw] h-[70vh] transition-transform duration-200 rounded"
               style={{ transform: `scale(${zoom})` }}
-            />
+            >
+              <span className="text-sm text-muted-foreground">Image</span>
+            </div>
           </div>
         )}
 
@@ -114,16 +114,21 @@ export function MediaLightbox({ open, onOpenChange, type, url, title }: MediaLig
             <video
               ref={videoRef}
               src={url}
-              className="max-w-full max-h-[80vh] object-contain"
+              className="hidden"
               onTimeUpdate={handleVideoTimeUpdate}
               onLoadedMetadata={handleVideoLoadedMetadata}
               onEnded={() => setIsPlaying(false)}
               muted={isMuted}
-              onClick={togglePlay}
             />
+            <div
+              className="bg-muted flex items-center justify-center w-[60vw] max-w-full h-[60vh] rounded cursor-pointer"
+              onClick={togglePlay}
+            >
+              <span className="text-sm text-muted-foreground">Video</span>
+            </div>
 
             {/* Video controls */}
-            <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-background/90 to-transparent p-4">
+            <div className="absolute bottom-0 left-0 right-0 bg-background border-t border-border p-4">
               <div className="flex items-center gap-3">
                 <Button
                   variant="ghost"
@@ -164,7 +169,7 @@ export function MediaLightbox({ open, onOpenChange, type, url, title }: MediaLig
         )}
 
         {title && (
-          <div className="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-background to-transparent pointer-events-none">
+          <div className="absolute bottom-0 left-0 right-0 p-4 bg-background border-t border-border pointer-events-none">
             <p className="text-sm font-medium text-foreground">{title}</p>
           </div>
         )}

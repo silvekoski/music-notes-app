@@ -21,12 +21,12 @@ import { CardAspectRatio } from '@/types';
 import { useState } from 'react';
 
 const colorPalette = [
-  '#8B7355',
-  '#6B8E9F',
-  '#7B9B8B',
-  '#9B8B7B',
-  '#9B7B8B',
-  '#8B7B9B',
+  '#3a3a3a',
+  '#5c5c5c',
+  '#7a7a7a',
+  '#999999',
+  '#b8b8b8',
+  '#d6d6d6',
 ];
 
 export function BoardSettingsPanel() {
@@ -52,10 +52,10 @@ export function BoardSettingsPanel() {
               <button
                 key={color}
                 className={cn(
-                  'w-6 h-6 rounded-full border-2 transition-all',
+                  'w-6 h-6 rounded-full border-2 transition-colors',
                   boardSettings.colorPalette === color
-                    ? 'border-foreground scale-110'
-                    : 'border-transparent hover:scale-105'
+                    ? 'border-foreground'
+                    : 'border-transparent'
                 )}
                 style={{ backgroundColor: color }}
                 onClick={() => setBoardSettings({ colorPalette: color })}
