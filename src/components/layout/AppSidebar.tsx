@@ -62,15 +62,14 @@ export function AppSidebar() {
   return (
     <>
       <Sidebar className="border-r border-border">
-        <SidebarHeader className="p-4 border-b border-border">
-
+        <SidebarHeader className="h-14 flex-row items-center px-4 py-0 border-b border-border">
           <div className="flex items-center gap-3">
-            <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-primary">
-              <Music className="h-5 w-5 text-primary-foreground" />
+            <div className="flex h-8 w-8 items-center justify-center rounded bg-primary shrink-0">
+              <Music className="h-4 w-4 text-primary-foreground" />
             </div>
             {!collapsed && (
-              <div>
-                <h1 className="text-lg font-semibold text-foreground">Music Notes</h1>
+              <div className="leading-tight">
+                <h1 className="text-sm font-semibold text-foreground">Music Notes</h1>
                 <p className="text-xs text-muted-foreground">Creative notebook</p>
               </div>
             )}
