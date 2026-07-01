@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Card } from '@/types';
-import { Pencil, MoreHorizontal, GripVertical, Music, Image, Video, Trash2, Check } from 'lucide-react';
+import { Pencil, MoreHorizontal, Music, Image, Video, Trash2, Check } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
@@ -153,11 +153,8 @@ export function BoardCard({ card, onEdit, isDragging, isSelected, onSelect, sele
             isMediaBackground && 'pointer-events-none'
           )}
         >
-          {/* Left: drag handle / attachment type */}
+          {/* Left: attachment type */}
           <div className="flex items-center gap-1.5 min-h-6 text-muted-foreground">
-            {!selectionMode && (
-              <GripVertical className="h-4 w-4 shrink-0 opacity-0 group-hover:opacity-100 transition-opacity" />
-            )}
             {AttachmentIcon && !isMediaBackground && (
               <span className="flex items-center gap-1 text-[10px] font-medium uppercase tracking-wide">
                 <AttachmentIcon className="h-3.5 w-3.5" />
