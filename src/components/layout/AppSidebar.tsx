@@ -21,7 +21,7 @@ import {
   useSidebar,
 } from '@/components/ui/sidebar';
 import { Button } from '@/components/ui/button';
-import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
+
 import { useAppStore } from '@/stores/appStore';
 import { cn } from '@/lib/utils';
 import { CreateProjectModal } from '@/components/modals/CreateProjectModal';
@@ -31,7 +31,6 @@ import { SettingsModal } from '@/components/modals/SettingsModal';
 export function AppSidebar() {
   const { state } = useSidebar();
   const collapsed = state === 'collapsed';
-  const [projectsOpen, setProjectsOpen] = useState(true);
   const [expandedProjects, setExpandedProjects] = useState<Record<string, boolean>>({});
   const [createProjectOpen, setCreateProjectOpen] = useState(false);
   const [createBoardOpen, setCreateBoardOpen] = useState(false);
@@ -77,13 +76,11 @@ export function AppSidebar() {
         </SidebarHeader>
 
         <SidebarContent className="p-2">
-          <Collapsible open={projectsOpen} onOpenChange={setProjectsOpen}>
-            <SidebarGroup>
-              <CollapsibleTrigger asChild>
-                <SidebarGroupLabel className="flex items-center justify-between cursor-pointer hover:bg-accent rounded-md px-2 py-1.5">
-                  <span className="text-xs font-medium text-muted-foreground">
-                    Projects
-                  </span>
+          <SidebarGroup>
+              <SidebarGroupLabel className="flex items-center justify-between px-2 py-1.5">
+                <span className="text-xs font-medium text-muted-foreground">
+                  Projects
+                </span>
                   <div className="flex items-center gap-1">
                     <Button
                       variant="ghost"
@@ -114,10 +111,8 @@ export function AppSidebar() {
                     </Button>
                   </div>
                 </SidebarGroupLabel>
-              </CollapsibleTrigger>
-              <CollapsibleContent>
-                <SidebarGroupContent>
-                  <SidebarMenu>
+              <SidebarGroupContent>
+                <SidebarMenu>
                     {projects.map((project) => {
                       const isActive = selectedProjectId === project.id;
                       const projectBoards = boards.filter((b) => b.projectId === project.id);
@@ -252,9 +247,7 @@ export function AppSidebar() {
                     })}
                   </SidebarMenu>
                 </SidebarGroupContent>
-              </CollapsibleContent>
             </SidebarGroup>
-          </Collapsible>
         </SidebarContent>
       </Sidebar>
 
