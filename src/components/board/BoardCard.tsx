@@ -28,6 +28,20 @@ const attachmentIcons = {
   video: Video,
 };
 
+function formatRelativeTime(date: Date | string) {
+  const then = new Date(date).getTime();
+  if (Number.isNaN(then)) return '';
+  const diff = Date.now() - then;
+  const mins = Math.round(diff / 60000);
+  if (mins < 1) return 'just now';
+  if (mins < 60) return `${mins}m ago`;
+  const hours = Math.round(mins / 60);
+  if (hours < 24) return `${hours}h ago`;
+  const days = Math.round(hours / 24);
+  if (days < 7) return `${days}d ago`;
+  return new Date(date).toLocaleDateString(undefined, { month: 'short', day: 'numeric' });
+}
+
 export function BoardCard({ card, onEdit, isDragging, isSelected, onSelect, selectionMode }: BoardCardProps) {
   const { boardSettings, deleteCard } = useAppStore();
   const [lightboxOpen, setLightboxOpen] = useState(false);
@@ -46,6 +60,10 @@ export function BoardCard({ card, onEdit, isDragging, isSelected, onSelect, sele
   const isImage = card.attachmentMeta?.type === 'image';
   const isVideo = card.attachmentMeta?.type === 'video';
   const isAudio = card.attachmentMeta?.type === 'audio';
+  const isMediaBackground = hasMediaPreview && (isImage || isVideo);
+
+  const visibleTags = card.tags?.slice(0, 2) ?? [];
+  const extraTagCount = (card.tags?.length ?? 0) - visibleTags.length;
 
   const handleClick = (e: React.MouseEvent) => {
     if (selectionMode && onSelect) {
@@ -67,21 +85,21 @@ export function BoardCard({ card, onEdit, isDragging, isSelected, onSelect, sele
     <>
       <div
         className={cn(
-          'group relative bg-card border transition-all duration-200 overflow-hidden',
+          'group relative flex flex-col bg-card border transition-colors duration-200 overflow-hidden',
           aspectRatioClass,
           boardSettings.removeCornerRadius ? 'rounded-none' : 'rounded',
           isDragging ? 'opacity-70 ring-2 ring-primary' : 'hover:border-ring',
           isSelected ? 'border-primary ring-2 ring-primary/50' : 'border-border',
           'cursor-grab active:cursor-grabbing'
         )}
+        onClick={handleClick}
       >
         {/* Media Background - Image */}
-        {hasMediaPreview && isImage && (
+        {isImage && (
           <div className="absolute inset-0 w-full h-full">
             <div className="w-full h-full bg-muted flex items-center justify-center">
               <span className="text-xs text-muted-foreground">Image</span>
             </div>
-            {/* Fullscreen button */}
             <Button
               variant="ghost"
               size="icon"
@@ -94,13 +112,12 @@ export function BoardCard({ card, onEdit, isDragging, isSelected, onSelect, sele
         )}
 
         {/* Media Background - Video */}
-        {hasMediaPreview && isVideo && (
+        {isVideo && (
           <div className="absolute inset-0 w-full h-full">
             <div className="w-full h-full bg-muted flex items-center justify-center">
               <span className="text-xs text-muted-foreground">Video</span>
             </div>
-            {/* Play overlay */}
-            <div 
+            <div
               className="absolute inset-0 flex items-center justify-center cursor-pointer"
               onClick={handleMediaClick}
             >
@@ -129,102 +146,126 @@ export function BoardCard({ card, onEdit, isDragging, isSelected, onSelect, sele
           </div>
         )}
 
-        {/* Drag Handle */}
-        {!selectionMode && (
-          <div className="absolute left-2 top-2 opacity-0 group-hover:opacity-100 transition-opacity z-10">
-            <GripVertical className="h-4 w-4 text-muted-foreground" />
+        {/* Header: meta label (left) + actions (right) */}
+        <div
+          className={cn(
+            'relative z-10 flex items-center justify-between gap-2 px-3 pt-3',
+            isMediaBackground && 'pointer-events-none'
+          )}
+        >
+          {/* Left: drag handle / attachment type */}
+          <div className="flex items-center gap-1.5 min-h-6 text-muted-foreground">
+            {!selectionMode && (
+              <GripVertical className="h-4 w-4 shrink-0 opacity-0 group-hover:opacity-100 transition-opacity" />
+            )}
+            {AttachmentIcon && !isMediaBackground && (
+              <span className="flex items-center gap-1 text-[10px] font-medium uppercase tracking-wide">
+                <AttachmentIcon className="h-3.5 w-3.5" />
+                {card.attachmentMeta?.type}
+              </span>
+            )}
           </div>
-        )}
 
-        {/* Card Actions */}
-        <div className="absolute right-2 top-2 flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity z-10">
-          <Button
-            variant="ghost"
-            size="icon"
-            className="h-7 w-7 bg-background hover:bg-background"
-            onClick={(e) => {
-              e.stopPropagation();
-              onEdit();
-            }}
-          >
-            <Pencil className="h-3.5 w-3.5" />
-          </Button>
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
+          {/* Right: actions on hover */}
+          {!selectionMode && (
+            <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-auto">
               <Button
                 variant="ghost"
                 size="icon"
-                className="h-7 w-7 bg-background hover:bg-background"
-                onClick={(e) => e.stopPropagation()}
+                className="h-7 w-7 bg-background/90 hover:bg-background"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onEdit();
+                }}
               >
-                <MoreHorizontal className="h-3.5 w-3.5" />
+                <Pencil className="h-3.5 w-3.5" />
               </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-              <DropdownMenuItem onClick={onEdit}>
-                <Pencil className="mr-2 h-4 w-4" />
-                Edit
-              </DropdownMenuItem>
-              <DropdownMenuItem
-                className="text-destructive focus:text-destructive"
-                onClick={() => deleteCard(card.id)}
-              >
-                <Trash2 className="mr-2 h-4 w-4" />
-                Delete
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="h-7 w-7 bg-background/90 hover:bg-background"
+                    onClick={(e) => e.stopPropagation()}
+                  >
+                    <MoreHorizontal className="h-3.5 w-3.5" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" onClick={(e) => e.stopPropagation()}>
+                  <DropdownMenuItem onClick={onEdit}>
+                    <Pencil className="mr-2 h-4 w-4" />
+                    Edit
+                  </DropdownMenuItem>
+                  <DropdownMenuItem
+                    className="text-destructive focus:text-destructive"
+                    onClick={() => deleteCard(card.id)}
+                  >
+                    <Trash2 className="mr-2 h-4 w-4" />
+                    Delete
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            </div>
+          )}
         </div>
 
-        {/* Card Content */}
-        <div 
+        {/* Body */}
+        <div
           className={cn(
-            'flex flex-col h-full p-4 pt-8 relative z-[1]',
-            hasMediaPreview && (isImage || isVideo) && 'justify-end'
+            'relative z-[1] flex flex-1 flex-col px-3 pt-2 min-h-0',
+            isMediaBackground && 'justify-end pb-3'
           )}
-          onClick={handleClick}
         >
           {/* Audio Player - Inline */}
-          {hasMediaPreview && isAudio && card.attachmentUrl && (
-            <div className="mb-3 bg-muted/50 rounded-md p-3">
-              <InlineAudioPlayer 
-                url={card.attachmentUrl} 
+          {isAudio && card.attachmentUrl && (
+            <div className="mb-3 bg-muted rounded p-3">
+              <InlineAudioPlayer
+                url={card.attachmentUrl}
                 duration={card.attachmentMeta?.duration}
               />
             </div>
           )}
 
-          {/* Attachment Icon (for non-media cards with attachment meta) */}
-          {AttachmentIcon && !hasMediaPreview && (
-            <div className="mb-3 flex items-center gap-2 text-muted-foreground">
-              <AttachmentIcon className="h-4 w-4" />
-              <span className="text-xs uppercase">{card.attachmentMeta?.type}</span>
-              {card.attachmentMeta?.duration && (
-                <span className="text-xs">{card.attachmentMeta.duration}</span>
-              )}
-            </div>
-          )}
-
           {/* Title */}
           {!boardSettings.hideCardTitles && (
-            <h3 className={cn(
-              'font-medium text-card-foreground mb-1 line-clamp-2',
-              hasMediaPreview && (isImage || isVideo) && 'text-foreground'
-            )}>
+            <h3 className="font-medium leading-snug text-card-foreground line-clamp-2">
               {card.title}
             </h3>
           )}
 
           {/* Short Note */}
-          {card.shortNote && (!boardSettings.hideCardTitles || !hasMediaPreview) && (
-            <p className={cn(
-              'text-sm text-muted-foreground line-clamp-2',
-              !hasMediaPreview && 'mb-auto'
-            )}>
+          {card.shortNote && (!boardSettings.hideCardTitles || !isMediaBackground) && (
+            <p className="mt-1 text-sm leading-relaxed text-muted-foreground line-clamp-3">
               {card.shortNote}
             </p>
           )}
         </div>
+
+        {/* Footer: tags + timestamp */}
+        {!isMediaBackground && (visibleTags.length > 0 || card.updatedAt) && (
+          <div className="relative z-[1] mt-auto flex items-center justify-between gap-2 px-3 pb-3 pt-2">
+            <div className="flex items-center gap-1 overflow-hidden">
+              {visibleTags.map((tag) => (
+                <span
+                  key={tag}
+                  className="inline-flex items-center rounded border border-border px-1.5 py-0.5 text-[10px] text-muted-foreground truncate max-w-20"
+                >
+                  {tag}
+                </span>
+              ))}
+              {extraTagCount > 0 && (
+                <span className="text-[10px] text-muted-foreground shrink-0">
+                  +{extraTagCount}
+                </span>
+              )}
+            </div>
+            {card.updatedAt && (
+              <span className="shrink-0 text-[10px] text-muted-foreground">
+                {formatRelativeTime(card.updatedAt)}
+              </span>
+            )}
+          </div>
+        )}
       </div>
 
       {/* Lightbox for fullscreen view */}
