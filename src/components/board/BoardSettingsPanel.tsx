@@ -34,7 +34,7 @@ export function BoardSettingsPanel() {
         </Button>
       </PopoverTrigger>
 
-      <PopoverContent align="start" className="w-80 p-4 space-y-5">
+      <PopoverContent align="start" className="w-80 p-4 space-y-5 border-0">
         {/* Aspect Ratio */}
         <div className="space-y-2">
           <Label className="text-xs font-medium">Aspect Ratio</Label>
