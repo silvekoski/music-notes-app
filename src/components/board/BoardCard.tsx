@@ -88,8 +88,12 @@ export function BoardCard({ card, onEdit, isDragging, isSelected, onSelect, sele
           'group relative flex flex-col bg-card border transition-colors duration-200 overflow-hidden',
           aspectRatioClass,
           boardSettings.removeCornerRadius ? 'rounded-none' : 'rounded',
-          isDragging ? 'opacity-70 ring-2 ring-primary' : 'hover:border-ring',
-          isSelected ? 'border-primary ring-2 ring-primary/50' : 'border-border',
+          isDragging ? 'opacity-70 ring-2 ring-primary' : !boardSettings.hideCardBorders && 'hover:border-ring',
+          isSelected
+            ? 'border-primary ring-2 ring-primary/50'
+            : boardSettings.hideCardBorders
+            ? 'border-transparent'
+            : 'border-border',
           'cursor-grab active:cursor-grabbing'
         )}
         onClick={handleClick}

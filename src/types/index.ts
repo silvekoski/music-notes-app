@@ -47,6 +47,7 @@ export type CardAspectRatio = '4:5' | '1:1' | '5:4';
 
 export interface BoardSettings {
   removeCornerRadius: boolean;
+  hideCardBorders: boolean;
   removeCardSpacing: boolean;
   hideCardTitles: boolean;
   aspectRatio: CardAspectRatio;

@@ -45,6 +45,7 @@ interface AppState {
 
 const defaultBoardSettings: BoardSettings = {
   removeCornerRadius: false,
+  hideCardBorders: false,
   removeCardSpacing: false,
   hideCardTitles: false,
   aspectRatio: '4:5',

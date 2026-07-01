@@ -95,6 +95,15 @@ export function BoardSettingsPanel() {
           </div>
 
           <div className="flex items-center justify-between">
+            <Label htmlFor="hide-borders" className="text-xs cursor-pointer">Hide Borders</Label>
+            <Switch
+              id="hide-borders"
+              checked={boardSettings.hideCardBorders}
+              onCheckedChange={(checked) => setBoardSettings({ hideCardBorders: checked })}
+            />
+          </div>
+
+          <div className="flex items-center justify-between">
             <Label htmlFor="card-spacing" className="text-xs cursor-pointer">No Spacing</Label>
             <Switch
               id="card-spacing"
