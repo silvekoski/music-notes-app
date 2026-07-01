@@ -221,8 +221,8 @@ export function BoardGrid({ onNewCard }: BoardGridProps) {
                       <div
                         key={`empty-${index}`}
                         className={cn(
-                          'border-2 border-dashed border-border/50 transition-colors hover:border-border',
-                          boardSettings.removeCornerRadius ? 'rounded-none' : 'rounded-lg',
+                          'border border-border transition-colors',
+                          boardSettings.removeCornerRadius ? 'rounded-none' : 'rounded',
                           {
                             'aspect-[4/5]': boardSettings.aspectRatio === '4:5',
                             'aspect-square': boardSettings.aspectRatio === '1:1',
