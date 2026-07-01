@@ -158,7 +158,7 @@ export function NotificationsPopover() {
                         key={n.id}
                         onClick={() => markRead(n.id)}
                         className={cn(
-                          'group relative flex gap-3 px-4 py-3 cursor-pointer border-b border-border last:border-b-0 transition-colors hover:bg-muted',
+                          'group relative flex gap-3 px-4 py-3 cursor-pointer transition-colors hover:bg-muted',
                           n.unread && 'bg-muted/40'
                         )}
                       >
