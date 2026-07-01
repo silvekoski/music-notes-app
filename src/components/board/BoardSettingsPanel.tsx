@@ -20,15 +20,6 @@ import { cn } from '@/lib/utils';
 import { CardAspectRatio } from '@/types';
 import { useState } from 'react';
 
-const colorPalette = [
-  '#3a3a3a',
-  '#5c5c5c',
-  '#7a7a7a',
-  '#999999',
-  '#b8b8b8',
-  '#d6d6d6',
-];
-
 export function BoardSettingsPanel() {
   const { boardSettings, setBoardSettings } = useAppStore();
   const [isOpen, setIsOpen] = useState(false);
@@ -44,26 +35,6 @@ export function BoardSettingsPanel() {
       </PopoverTrigger>
 
       <PopoverContent align="start" className="w-80 p-4 space-y-5">
-        {/* Color Palette */}
-        <div className="space-y-2">
-          <Label className="text-xs font-medium">Color Palette</Label>
-          <div className="flex gap-2">
-            {colorPalette.map((color) => (
-              <button
-                key={color}
-                className={cn(
-                  'w-6 h-6 rounded-full border-2 transition-colors',
-                  boardSettings.colorPalette === color
-                    ? 'border-foreground'
-                    : 'border-transparent'
-                )}
-                style={{ backgroundColor: color }}
-                onClick={() => setBoardSettings({ colorPalette: color })}
-              />
-            ))}
-          </div>
-        </div>
-
         {/* Aspect Ratio */}
         <div className="space-y-2">
           <Label className="text-xs font-medium">Aspect Ratio</Label>

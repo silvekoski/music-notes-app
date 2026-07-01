@@ -21,22 +21,12 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { useAppStore } from '@/stores/appStore';
-import { cn } from '@/lib/utils';
 import { CardAspectRatio } from '@/types';
 
 interface SettingsModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
 }
-
-const colorPalette = [
-  '#3a3a3a',
-  '#5c5c5c',
-  '#7a7a7a',
-  '#999999',
-  '#b8b8b8',
-  '#d6d6d6',
-];
 
 export function SettingsModal({ open, onOpenChange }: SettingsModalProps) {
   const { boardSettings, setBoardSettings, cards, selectedBoardId } = useAppStore();
@@ -78,26 +68,6 @@ export function SettingsModal({ open, onOpenChange }: SettingsModalProps) {
             <TabsContent value="general" className="space-y-6 m-0">
               <div>
                 <h3 className="text-sm font-medium mb-3">Customize how cards are displayed in this project</h3>
-                
-                {/* Color Palette */}
-                <div className="space-y-2 mb-6">
-                  <Label>Color Palette</Label>
-                  <div className="flex gap-2">
-                    {colorPalette.map((color) => (
-                      <button
-                        key={color}
-                        className={cn(
-                          'w-8 h-8 rounded-full border-2 transition-colors',
-                          boardSettings.colorPalette === color
-                            ? 'border-foreground'
-                            : 'border-transparent'
-                        )}
-                        style={{ backgroundColor: color }}
-                        onClick={() => setBoardSettings({ colorPalette: color })}
-                      />
-                    ))}
-                  </div>
-                </div>
 
                 {/* Appearance Toggles */}
                 <div className="space-y-4 mb-6">

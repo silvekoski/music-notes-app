@@ -44,7 +44,6 @@ interface AppState {
 }
 
 const defaultBoardSettings: BoardSettings = {
-  colorPalette: '#8B7355',
   removeCornerRadius: false,
   removeCardSpacing: false,
   hideCardTitles: false,

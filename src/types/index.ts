@@ -46,7 +46,6 @@ export interface Tag {
 export type CardAspectRatio = '4:5' | '1:1' | '5:4';
 
 export interface BoardSettings {
-  colorPalette: string;
   removeCornerRadius: boolean;
   removeCardSpacing: boolean;
   hideCardTitles: boolean;
