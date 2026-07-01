@@ -1,4 +1,4 @@
-import { Search, Tag, Settings, Bell, Menu, Moon, Sun, LogOut, User as UserIcon, Download } from 'lucide-react';
+import { Search, Settings, Menu, Moon, Sun, LogOut, User as UserIcon, Download } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -11,14 +11,10 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from '@/components/ui/popover';
 import { useAppStore } from '@/stores/appStore';
 import { useState, useEffect, RefObject } from 'react';
 import { TagsPopover } from '@/components/board/TagsPopover';
+import { NotificationsPopover } from '@/components/layout/NotificationsPopover';
 import { useNavigate } from 'react-router-dom';
 
 interface TopBarProps {
@@ -87,37 +83,8 @@ export function TopBar({ searchInputRef }: TopBarProps) {
             {isDark ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
           </Button>
 
-          {/* Notifications Dropdown */}
-          <Popover>
-            <PopoverTrigger asChild>
-              <Button variant="ghost" size="icon" className="text-muted-foreground hover:text-foreground relative">
-                <Bell className="h-5 w-5" />
-                <span className="absolute -top-0.5 -right-0.5 h-4 w-4 rounded-full bg-primary text-primary-foreground text-[10px] flex items-center justify-center">
-                  2
-                </span>
-              </Button>
-            </PopoverTrigger>
-            <PopoverContent className="w-80" align="end">
-              <div className="space-y-3">
-                <h4 className="font-medium text-sm">Notifications</h4>
-                <div className="space-y-2">
-                  <div className="p-2 rounded-md bg-muted/50 hover:bg-muted cursor-pointer">
-                    <p className="text-sm font-medium">New collaborator joined</p>
-                    <p className="text-xs text-muted-foreground">Alex joined "Album Ideas" project</p>
-                    <p className="text-xs text-muted-foreground mt-1">2 hours ago</p>
-                  </div>
-                  <div className="p-2 rounded-md bg-muted/50 hover:bg-muted cursor-pointer">
-                    <p className="text-sm font-medium">New comment</p>
-                    <p className="text-xs text-muted-foreground">Sarah commented on "Sunset Vibes"</p>
-                    <p className="text-xs text-muted-foreground mt-1">5 hours ago</p>
-                  </div>
-                </div>
-                <Button variant="ghost" className="w-full text-sm">
-                  View all notifications
-                </Button>
-              </div>
-            </PopoverContent>
-          </Popover>
+          {/* Notifications */}
+          <NotificationsPopover />
 
           {/* User Dropdown */}
           <DropdownMenu>
