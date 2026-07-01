@@ -260,7 +260,7 @@ export function BoardCard({ card, onEdit, isDragging, isSelected, onSelect, sele
               {visibleTags.map((tag) => (
                 <span
                   key={tag}
-                  className="inline-flex items-center rounded border border-border px-1.5 py-0.5 text-[10px] text-muted-foreground truncate max-w-20"
+                  className="inline-flex shrink-0 items-center whitespace-nowrap rounded border border-border px-1.5 py-0.5 text-[10px] text-muted-foreground"
                 >
                   {tag}
                 </span>
