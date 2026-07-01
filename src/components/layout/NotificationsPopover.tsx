@@ -230,7 +230,7 @@ export function NotificationsPopover() {
         )}
 
         {/* Footer */}
-        <div className="border-t border-border p-2">
+        <div className="p-2">
           <Button variant="ghost" className="w-full h-8 text-xs text-muted-foreground hover:text-foreground">
             View all notifications
           </Button>
