@@ -133,7 +133,7 @@ export function BoardSettingsPanel() {
           </div>
 
           <div className="flex items-center justify-between">
-            <Label htmlFor="hide-titles" className="text-xs cursor-pointer">Hide Titles</Label>
+            <Label htmlFor="hide-titles" className="text-xs cursor-pointer">Hide text</Label>
             <Switch
               id="hide-titles"
               checked={boardSettings.hideCardTitles}
