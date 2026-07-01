@@ -95,7 +95,7 @@ export function BoardSettingsPanel() {
           </div>
 
           <div className="flex items-center justify-between">
-            <Label htmlFor="hide-borders" className="text-xs cursor-pointer">Hide Borders</Label>
+            <Label htmlFor="hide-borders" className="text-xs cursor-pointer">No Borders</Label>
             <Switch
               id="hide-borders"
               checked={boardSettings.hideCardBorders}
