@@ -97,9 +97,12 @@ export function BoardCard({ card, onEdit, isDragging, isSelected, onSelect, sele
         {/* Media Background - Image */}
         {isImage && (
           <div className="absolute inset-0 w-full h-full">
-            <div className="w-full h-full bg-muted flex items-center justify-center">
-              <span className="text-xs text-muted-foreground">Image</span>
-            </div>
+            <img
+              src={card.attachmentUrl || 'https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?w=800'}
+              alt={card.title || 'Card image'}
+              loading="lazy"
+              className="w-full h-full object-cover bg-muted"
+            />
             <Button
               variant="ghost"
               size="icon"
@@ -206,6 +209,11 @@ export function BoardCard({ card, onEdit, isDragging, isSelected, onSelect, sele
           )}
         </div>
 
+        {/* Scrim for readability over media */}
+        {isMediaBackground && !boardSettings.hideCardTitles && (
+          <div className="pointer-events-none absolute inset-x-0 bottom-0 z-[1] h-2/3 bg-gradient-to-t from-black/80 via-black/30 to-transparent" />
+        )}
+
         {/* Body */}
         <div
           className={cn(
@@ -225,7 +233,12 @@ export function BoardCard({ card, onEdit, isDragging, isSelected, onSelect, sele
 
           {/* Title */}
           {!boardSettings.hideCardTitles && (
-            <h3 className="font-medium leading-snug text-card-foreground line-clamp-2">
+            <h3
+              className={cn(
+                'font-medium leading-snug line-clamp-2',
+                isMediaBackground ? 'text-white' : 'text-card-foreground'
+              )}
+            >
               {card.title}
             </h3>
           )}
