@@ -52,6 +52,8 @@ export function BoardCard({ card, onEdit, isDragging, isSelected, onSelect, sele
     '5:4': 'aspect-[5/4]',
   }[boardSettings.aspectRatio];
 
+  const isCompact = boardSettings.aspectRatio === '1:1' || boardSettings.aspectRatio === '5:4';
+
   const AttachmentIcon = card.attachmentMeta?.type
     ? attachmentIcons[card.attachmentMeta.type]
     : null;
@@ -153,65 +155,47 @@ export function BoardCard({ card, onEdit, isDragging, isSelected, onSelect, sele
           </div>
         )}
 
-        {/* Header: meta label (left) + actions (right) */}
-        <div
-          className={cn(
-            'relative z-10 flex items-center justify-between gap-2 px-3 pt-3',
-            isMediaBackground && 'pointer-events-none'
-          )}
-        >
-          {/* Left: attachment type */}
-          <div className="flex items-center gap-1.5 min-h-6 text-muted-foreground">
-            {AttachmentIcon && !isMediaBackground && (
-              <span className="flex items-center gap-1 text-[10px] font-medium uppercase tracking-wide">
-                <AttachmentIcon className="h-3.5 w-3.5" />
-                {card.attachmentMeta?.type}
-              </span>
-            )}
+        {/* Actions overlay (top-right, on hover) */}
+        {!selectionMode && (
+          <div className="absolute right-2 top-2 z-20 flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+            <Button
+              variant="ghost"
+              size="icon"
+              className="h-7 w-7 bg-background/90 hover:bg-background"
+              onClick={(e) => {
+                e.stopPropagation();
+                onEdit();
+              }}
+            >
+              <Pencil className="h-3.5 w-3.5" />
+            </Button>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="h-7 w-7 bg-background/90 hover:bg-background"
+                  onClick={(e) => e.stopPropagation()}
+                >
+                  <MoreHorizontal className="h-3.5 w-3.5" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" onClick={(e) => e.stopPropagation()}>
+                <DropdownMenuItem onClick={onEdit}>
+                  <Pencil className="mr-2 h-4 w-4" />
+                  Edit
+                </DropdownMenuItem>
+                <DropdownMenuItem
+                  className="text-destructive focus:text-destructive"
+                  onClick={() => deleteCard(card.id)}
+                >
+                  <Trash2 className="mr-2 h-4 w-4" />
+                  Delete
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
           </div>
-
-          {/* Right: actions on hover */}
-          {!selectionMode && (
-            <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-auto">
-              <Button
-                variant="ghost"
-                size="icon"
-                className="h-7 w-7 bg-background/90 hover:bg-background"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  onEdit();
-                }}
-              >
-                <Pencil className="h-3.5 w-3.5" />
-              </Button>
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    className="h-7 w-7 bg-background/90 hover:bg-background"
-                    onClick={(e) => e.stopPropagation()}
-                  >
-                    <MoreHorizontal className="h-3.5 w-3.5" />
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="end" onClick={(e) => e.stopPropagation()}>
-                  <DropdownMenuItem onClick={onEdit}>
-                    <Pencil className="mr-2 h-4 w-4" />
-                    Edit
-                  </DropdownMenuItem>
-                  <DropdownMenuItem
-                    className="text-destructive focus:text-destructive"
-                    onClick={() => deleteCard(card.id)}
-                  >
-                    <Trash2 className="mr-2 h-4 w-4" />
-                    Delete
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
-            </div>
-          )}
-        </div>
+        )}
 
         {/* Scrim for readability over media */}
         {isMediaBackground && !boardSettings.hideCardTitles && (
@@ -221,10 +205,18 @@ export function BoardCard({ card, onEdit, isDragging, isSelected, onSelect, sele
         {/* Body */}
         <div
           className={cn(
-            'relative z-[1] flex flex-1 flex-col px-3 pt-2 min-h-0',
+            'relative z-[1] flex flex-1 flex-col px-3 pt-3 min-h-0 overflow-hidden',
             isMediaBackground && 'justify-end pb-3'
           )}
         >
+          {/* Attachment type label */}
+          {AttachmentIcon && !isMediaBackground && (
+            <span className="mb-1 flex items-center gap-1 text-[10px] font-medium uppercase tracking-wide text-muted-foreground">
+              <AttachmentIcon className="h-3.5 w-3.5" />
+              {card.attachmentMeta?.type}
+            </span>
+          )}
+
           {/* Audio Player - Inline */}
           {isAudio && card.attachmentUrl && (
             <div className="mb-3 bg-muted rounded p-3">
@@ -240,6 +232,7 @@ export function BoardCard({ card, onEdit, isDragging, isSelected, onSelect, sele
             <h3
               className={cn(
                 'font-medium leading-snug line-clamp-2',
+                isCompact && 'text-sm',
                 isMediaBackground ? 'text-white' : 'text-card-foreground'
               )}
             >
@@ -249,7 +242,12 @@ export function BoardCard({ card, onEdit, isDragging, isSelected, onSelect, sele
 
           {/* Short Note */}
           {card.shortNote && (!boardSettings.hideCardTitles || !isMediaBackground) && (
-            <p className="mt-1 text-sm leading-relaxed text-muted-foreground line-clamp-3">
+            <p
+              className={cn(
+                'mt-1 text-sm leading-relaxed text-muted-foreground',
+                isCompact ? 'line-clamp-2' : 'line-clamp-3'
+              )}
+            >
               {card.shortNote}
             </p>
           )}
