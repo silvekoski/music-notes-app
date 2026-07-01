@@ -10,14 +10,14 @@ import { useBulkCardActions } from '@/hooks/useBulkCardActions';
 import { Card } from '@/types';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
-import { CheckSquare, Plus } from 'lucide-react';
+import { CheckSquare, Plus, SquarePlus } from 'lucide-react';
 
 interface BoardGridProps {
   onNewCard?: () => void;
 }
 
 export function BoardGrid({ onNewCard }: BoardGridProps) {
-  const { cards, selectedBoardId, searchQuery, selectedTags, boardSettings, tags: allTags, updateCard, boards } = useAppStore();
+  const { cards, selectedBoardId, searchQuery, selectedTags, boardSettings, tags: allTags, updateCard, addCard, boards } = useAppStore();
 
   const [selectedCard, setSelectedCard] = useState<Card | null>(null);
   const [modalOpen, setModalOpen] = useState(false);
@@ -105,6 +105,24 @@ export function BoardGrid({ onNewCard }: BoardGridProps) {
     selectAll(filteredCards.map((c) => c.id));
   };
 
+  const handleAddBlank = () => {
+    if (!selectedBoardId) return;
+    const index = boardCards.length;
+    const blankCard: Card = {
+      id: crypto.randomUUID(),
+      boardId: selectedBoardId,
+      title: 'Untitled',
+      tags: [],
+      position: {
+        x: index % boardSettings.gridWidth,
+        y: Math.floor(index / boardSettings.gridWidth),
+      },
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    };
+    addCard(blankCard);
+  };
+
   // Generate empty placeholder slots
   const totalSlots = boardSettings.gridWidth * (Math.ceil(filteredCards.length / boardSettings.gridWidth) + boardSettings.extraEmptyRows);
   const emptySlots = Math.max(0, totalSlots - filteredCards.length);
@@ -144,6 +162,12 @@ export function BoardGrid({ onNewCard }: BoardGridProps) {
                   <CheckSquare className="h-4 w-4 mr-2" />
                   {selectionMode ? 'Done' : 'Select'}
                 </Button>
+                {boardSettings.freeGridMovement && (
+                  <Button variant="outline" size="sm" onClick={handleAddBlank} className="gap-2">
+                    <SquarePlus className="h-4 w-4" />
+                    Add Blank
+                  </Button>
+                )}
                 {onNewCard && (
                   <Button size="sm" onClick={onNewCard} className="gap-2">
                     <Plus className="h-4 w-4" />
