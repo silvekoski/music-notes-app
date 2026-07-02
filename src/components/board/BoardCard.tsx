@@ -243,11 +243,6 @@ export function BoardCard({ card, onEdit, isDragging, isSelected, onSelect, sele
           </div>
         )}
 
-        {/* Scrim for readability over media */}
-        {isMediaBackground && !boardSettings.hideCardTitles && (
-          <div className="pointer-events-none absolute inset-x-0 bottom-0 z-[1] h-2/3 bg-gradient-to-t from-black/80 via-black/30 to-transparent" />
-        )}
-
         {/* Body */}
         <div
           className={cn(
@@ -273,13 +268,12 @@ export function BoardCard({ card, onEdit, isDragging, isSelected, onSelect, sele
             </div>
           )}
 
-          {/* Short Note */}
-          {card.shortNote && !boardSettings.hideCardTitles && (
+          {/* Short Note (text cards only) */}
+          {card.shortNote && !boardSettings.hideCardTitles && !isMediaBackground && (
             <p
               className={cn(
-                'text-sm leading-relaxed',
-                isCompact ? 'line-clamp-3' : 'line-clamp-4',
-                isMediaBackground ? 'text-white' : 'text-muted-foreground'
+                'text-sm leading-relaxed text-muted-foreground',
+                isCompact ? 'line-clamp-3' : 'line-clamp-4'
               )}
             >
               {card.shortNote}
