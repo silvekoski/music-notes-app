@@ -273,25 +273,13 @@ export function BoardCard({ card, onEdit, isDragging, isSelected, onSelect, sele
             </div>
           )}
 
-          {/* Title */}
-          {!boardSettings.hideCardTitles && (
-            <h3
-              className={cn(
-                'font-medium leading-snug line-clamp-2',
-                isCompact && 'text-sm',
-                isMediaBackground ? 'text-white' : 'text-card-foreground'
-              )}
-            >
-              {card.title}
-            </h3>
-          )}
-
           {/* Short Note */}
-          {card.shortNote && (!boardSettings.hideCardTitles || !isMediaBackground) && (
+          {card.shortNote && !boardSettings.hideCardTitles && (
             <p
               className={cn(
-                'mt-1 text-sm leading-relaxed text-muted-foreground',
-                isCompact ? 'line-clamp-2' : 'line-clamp-3'
+                'text-sm leading-relaxed',
+                isCompact ? 'line-clamp-3' : 'line-clamp-4',
+                isMediaBackground ? 'text-white' : 'text-muted-foreground'
               )}
             >
               {card.shortNote}
