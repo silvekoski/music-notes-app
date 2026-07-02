@@ -15,6 +15,8 @@ import { useAppStore } from '@/stores/appStore';
 import { useState, useEffect, RefObject } from 'react';
 import { TagsPopover } from '@/components/board/TagsPopover';
 import { NotificationsPopover } from '@/components/layout/NotificationsPopover';
+import { PresenceBar } from '@/components/collaboration/PresenceBar';
+import { ActivityPanel } from '@/components/collaboration/ActivityPanel';
 import { useNavigate } from 'react-router-dom';
 
 interface TopBarProps {
@@ -74,6 +76,11 @@ export function TopBar({ searchInputRef }: TopBarProps) {
 
         <div className="flex items-center gap-2">
 
+          {/* Live collaboration presence */}
+          <PresenceBar />
+
+          <div className="mx-1 h-6 w-px bg-border" />
+
           <Button
             variant="ghost"
             size="icon"
@@ -82,6 +89,9 @@ export function TopBar({ searchInputRef }: TopBarProps) {
           >
             {isDark ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
           </Button>
+
+          {/* Activity feed */}
+          <ActivityPanel />
 
           {/* Notifications */}
           <NotificationsPopover />

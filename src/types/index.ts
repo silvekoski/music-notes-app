@@ -85,7 +85,32 @@ export interface Activity {
   projectId: string;
   userId: string;
   userName: string;
-  action: 'card_created' | 'card_edited' | 'card_deleted' | 'member_joined' | 'settings_changed';
+  action:
+    | 'card_created'
+    | 'card_edited'
+    | 'card_deleted'
+    | 'member_joined'
+    | 'settings_changed'
+    | 'card_selected'
+    | 'card_moved'
+    | 'comment_added';
   details: string;
   createdAt: Date;
+}
+
+export interface Collaborator {
+  id: string;
+  name: string;
+  color: string;
+  initials: string;
+  avatarUrl?: string;
+}
+
+export interface PresenceState {
+  collaboratorId: string;
+  cursor: { x: number; y: number } | null;
+  selectedCardId: string | null;
+  editingCardId: string | null;
+  isTyping: boolean;
+  lastActive: number;
 }

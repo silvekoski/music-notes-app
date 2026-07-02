@@ -15,6 +15,8 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Card as CardType, Comment } from '@/types';
 import { useAppStore } from '@/stores/appStore';
+import { useCollaborationStore } from '@/stores/collaborationStore';
+import { getCollaborator } from '@/lib/collaborators';
 import { toast } from 'sonner';
 import { format } from 'date-fns';
 import { FileUploader, FileMeta } from '@/components/media/FileUploader';
@@ -40,6 +42,17 @@ export function CardDetailsModal({ open, onOpenChange, card, isNew = false }: Ca
   const [attachmentMeta, setAttachmentMeta] = useState<CardType['attachmentMeta'] | undefined>();
 
   const cardComments = card ? comments.filter(c => c.cardId === card.id) : [];
+
+  // Collaborator currently typing on this card (simulated presence).
+  const typingCollaboratorId = useCollaborationStore((s) => {
+    if (!s.enabled || !card) return null;
+    for (const id of s.onlineIds) {
+      const p = s.presence[id];
+      if (p && p.editingCardId === card.id && p.isTyping) return id;
+    }
+    return null;
+  });
+  const typingCollaborator = getCollaborator(typingCollaboratorId);
 
   useEffect(() => {
     if (card) {
@@ -190,12 +203,24 @@ export function CardDetailsModal({ open, onOpenChange, card, isNew = false }: Ca
             <DialogTitle className="text-base">
               {isNew ? 'New Card' : 'Card Details'}
             </DialogTitle>
-            {!isNew && (
+            {typingCollaborator ? (
+              <span
+                className="flex items-center gap-1.5 text-xs font-medium"
+                style={{ color: typingCollaborator.color }}
+              >
+                <span className="flex gap-0.5">
+                  <span className="h-1.5 w-1.5 animate-bounce rounded-full [animation-delay:-0.3s]" style={{ backgroundColor: typingCollaborator.color }} />
+                  <span className="h-1.5 w-1.5 animate-bounce rounded-full [animation-delay:-0.15s]" style={{ backgroundColor: typingCollaborator.color }} />
+                  <span className="h-1.5 w-1.5 animate-bounce rounded-full" style={{ backgroundColor: typingCollaborator.color }} />
+                </span>
+                {typingCollaborator.name} is typing…
+              </span>
+            ) : !isNew ? (
               <span className="flex items-center gap-1.5 text-xs text-muted-foreground font-normal">
                 <CheckCircle2 className="h-3.5 w-3.5" />
                 Saved automatically
               </span>
-            )}
+            ) : null}
           </div>
         </DialogHeader>
 

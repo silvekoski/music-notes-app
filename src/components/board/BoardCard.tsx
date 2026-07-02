@@ -9,6 +9,8 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { useAppStore } from '@/stores/appStore';
+import { useCollaborationStore } from '@/stores/collaborationStore';
+import { getCollaborator } from '@/lib/collaborators';
 import { cn } from '@/lib/utils';
 import { InlineAudioPlayer } from '@/components/media/InlineAudioPlayer';
 import { MediaLightbox } from '@/components/media/MediaLightbox';
@@ -45,6 +47,27 @@ function formatRelativeTime(date: Date | string) {
 export function BoardCard({ card, onEdit, isDragging, isSelected, onSelect, selectionMode }: BoardCardProps) {
   const { boardSettings, deleteCard } = useAppStore();
   const [lightboxOpen, setLightboxOpen] = useState(false);
+
+  // Remote presence on this card. Returns a stable string signature so the card
+  // only re-renders when someone starts/stops selecting or editing it (not on
+  // every cursor frame). Editing takes precedence over selecting.
+  const remoteSignature = useCollaborationStore((s) => {
+    if (!s.enabled) return '';
+    let editingId: string | null = null;
+    let selectingId: string | null = null;
+    for (const id of s.onlineIds) {
+      const p = s.presence[id];
+      if (!p) continue;
+      if (p.editingCardId === card.id) {
+        editingId = id;
+        break;
+      }
+      if (p.selectedCardId === card.id && !selectingId) selectingId = id;
+    }
+    return editingId ? `edit:${editingId}` : selectingId ? `select:${selectingId}` : '';
+  });
+  const [remoteKind, remoteId] = remoteSignature.split(':');
+  const remoteCollaborator = getCollaborator(remoteId);
 
   const aspectRatioClass = {
     '4:5': 'aspect-[4/5]',
@@ -98,8 +121,31 @@ export function BoardCard({ card, onEdit, isDragging, isSelected, onSelect, sele
             : 'border-border',
           'cursor-grab active:cursor-grabbing'
         )}
+        style={
+          !isSelected && remoteKind === 'select' && remoteCollaborator
+            ? { boxShadow: `inset 0 0 0 2px ${remoteCollaborator.color}` }
+            : undefined
+        }
         onClick={handleClick}
       >
+        {/* Remote editing indicator */}
+        {!isSelected && remoteKind === 'edit' && remoteCollaborator && (
+          <>
+            <div
+              className="pointer-events-none absolute inset-0 z-[15] animate-pulse rounded-[inherit]"
+              style={{ boxShadow: `inset 0 0 0 2px ${remoteCollaborator.color}` }}
+            />
+            {!selectionMode && (
+              <div
+                className="absolute left-2 top-2 z-20 flex items-center gap-1 rounded px-1.5 py-0.5 text-[10px] font-medium text-white shadow-sm"
+                style={{ backgroundColor: remoteCollaborator.color }}
+              >
+                <Pencil className="h-3 w-3" />
+                {remoteCollaborator.name.split(' ')[0]} is editing
+              </div>
+            )}
+          </>
+        )}
         {/* Media Background - Image */}
         {isImage && (
           <div className="absolute inset-0 w-full h-full">

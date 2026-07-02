@@ -6,12 +6,16 @@ import { BoardGrid } from '@/components/board/BoardGrid';
 import { CardDetailsModal } from '@/components/modals/CardDetailsModal';
 import { useAppStore } from '@/stores/appStore';
 import { useKeyboardShortcuts } from '@/hooks/useKeyboardShortcuts';
+import { useSimulatedPresence } from '@/hooks/useSimulatedPresence';
 import { UserSettingsView } from '@/components/views/UserSettingsView';
 
 export default function Dashboard() {
   const [newCardModalOpen, setNewCardModalOpen] = useState(false);
   const { selectedBoardId, activeView, setActiveView } = useAppStore();
   const searchInputRef = useRef<HTMLInputElement>(null);
+
+  // Simulated multiplayer presence (cursors, selections, activity feed).
+  useSimulatedPresence();
 
   useKeyboardShortcuts({
     onNewCard: () => selectedBoardId && setNewCardModalOpen(true),

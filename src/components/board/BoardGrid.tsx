@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect, useRef } from 'react';
 import { DragDropContext, Droppable, Draggable, DropResult } from '@hello-pangea/dnd';
 import { useAppStore } from '@/stores/appStore';
 import { BoardCard } from './BoardCard';
@@ -6,11 +6,14 @@ import { BulkActionsBar } from './BulkActionsBar';
 import { BoardSettingsPanel } from './BoardSettingsPanel';
 import { CardDetailsModal } from '@/components/modals/CardDetailsModal';
 import { useBulkCardActions } from '@/hooks/useBulkCardActions';
+import { LiveCursors } from '@/components/collaboration/LiveCursors';
+import { useCollaborationStore } from '@/stores/collaborationStore';
+import { getCollaborator } from '@/lib/collaborators';
 
 import { Card } from '@/types';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
-import { CheckSquare, Plus, SquarePlus } from 'lucide-react';
+import { CheckSquare, Plus, SquarePlus, Navigation, X } from 'lucide-react';
 
 interface BoardGridProps {
   onNewCard?: () => void;
@@ -22,6 +25,17 @@ export function BoardGrid({ onNewCard }: BoardGridProps) {
   const [selectedCard, setSelectedCard] = useState<Card | null>(null);
   const [modalOpen, setModalOpen] = useState(false);
   const [selectionMode, setSelectionMode] = useState(false);
+
+  // Collaboration presence
+  const followingId = useCollaborationStore((s) => s.followingId);
+  const clearFollow = useCollaborationStore((s) => s.clearFollow);
+  const setBoardBounds = useCollaborationStore((s) => s.setBoardBounds);
+  const followedCursor = useCollaborationStore((s) =>
+    followingId ? s.presence[followingId]?.cursor ?? null : null
+  );
+  const followedCollaborator = getCollaborator(followingId);
+  const scrollRef = useRef<HTMLDivElement>(null);
+  const boardContentRef = useRef<HTMLDivElement>(null);
 
   const {
     selectedCardIds,
@@ -123,13 +137,72 @@ export function BoardGrid({ onNewCard }: BoardGridProps) {
     addCard(blankCard);
   };
 
+  // Report board-content bounds to the collaboration store so simulated cursors
+  // stay within the actual board region.
+  useEffect(() => {
+    const el = boardContentRef.current;
+    if (!el) return;
+    const update = () => setBoardBounds({ width: el.clientWidth, height: el.clientHeight });
+    update();
+    const ro = new ResizeObserver(update);
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, [setBoardBounds, selectedBoardId, filteredCards.length]);
+
+  // Follow mode: keep the followed collaborator's cursor comfortably in view.
+  useEffect(() => {
+    if (!followingId || !followedCursor) return;
+    const scroller = scrollRef.current;
+    const content = boardContentRef.current;
+    if (!scroller || !content) return;
+    const contentTop =
+      content.getBoundingClientRect().top - scroller.getBoundingClientRect().top + scroller.scrollTop;
+    const cursorY = followedCursor.y + contentTop;
+    const margin = 120;
+    const viewTop = scroller.scrollTop;
+    const viewBottom = viewTop + scroller.clientHeight;
+    if (cursorY < viewTop + margin || cursorY > viewBottom - margin) {
+      scroller.scrollTo({ top: Math.max(0, cursorY - scroller.clientHeight / 2), behavior: 'smooth' });
+    }
+  }, [followingId, followedCursor]);
+
+  // Esc exits follow mode.
+  useEffect(() => {
+    if (!followingId) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') clearFollow();
+    };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [followingId, clearFollow]);
+
   // Generate empty placeholder slots
   const totalSlots = boardSettings.gridWidth * (Math.ceil(filteredCards.length / boardSettings.gridWidth) + boardSettings.extraEmptyRows);
   const emptySlots = Math.max(0, totalSlots - filteredCards.length);
 
   return (
     <>
-      <div className="flex-1 overflow-auto p-6">
+      {/* Follow mode banner */}
+      {followingId && followedCollaborator && (
+        <div
+          className="fixed left-1/2 top-16 z-50 flex -translate-x-1/2 items-center gap-2 rounded-full px-3 py-1.5 text-xs font-medium text-white shadow-lg"
+          style={{ backgroundColor: followedCollaborator.color }}
+        >
+          <Navigation className="h-3.5 w-3.5" />
+          Following {followedCollaborator.name}
+          <span className="opacity-80">— press Esc to exit</span>
+          <button
+            type="button"
+            onClick={clearFollow}
+            className="ml-1 rounded-full p-0.5 hover:bg-white/20"
+            aria-label="Stop following"
+          >
+            <X className="h-3.5 w-3.5" />
+          </button>
+        </div>
+      )}
+
+      <div ref={scrollRef} className="flex-1 overflow-auto p-6">
         {/* Helper hint */}
         {boardCards.length === 0 && (
           <div className="flex items-center justify-center h-full">
@@ -177,6 +250,7 @@ export function BoardGrid({ onNewCard }: BoardGridProps) {
               </div>
             </div>
 
+            <div ref={boardContentRef} className="relative">
             <DragDropContext onDragEnd={handleDragEnd}>
               <Droppable droppableId="board" direction="horizontal">
                 {(provided) => (
@@ -235,6 +309,8 @@ export function BoardGrid({ onNewCard }: BoardGridProps) {
                 )}
               </Droppable>
             </DragDropContext>
+              <LiveCursors />
+            </div>
           </>
         )}
       </div>
