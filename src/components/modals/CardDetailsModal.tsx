@@ -154,7 +154,7 @@ export function CardDetailsModal({ open, onOpenChange, card, isNew = false }: Ca
     }
   };
 
-  // Auto-save on field changes (debounced) — local only
+  // Auto-save on field changes (debounced), local only
   useEffect(() => {
     if (card && !isNew && open) {
       const timeout = setTimeout(() => {

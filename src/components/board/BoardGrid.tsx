@@ -190,7 +190,7 @@ export function BoardGrid({ onNewCard }: BoardGridProps) {
         >
           <Navigation className="h-3.5 w-3.5" />
           Following {followedCollaborator.name}
-          <span className="opacity-80">— press Esc to exit</span>
+          <span className="opacity-80">(press Esc to exit)</span>
           <button
             type="button"
             onClick={clearFollow}
